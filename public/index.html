@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Números Cistercienses</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Gerador de Números Cistercienses</h1>
+
+  <form id="numberForm">
+    <input type="number" name="number" id="numberInput" min="1" max="9999" placeholder="Digite um número" required />
+    <button type="submit">Gerar</button>
+  </form>
+  <div id="result"></div>
+
+  <hr>
+
+  <h2>Reconhecer número a partir da imagem</h2>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="image" id="imageInput" accept="image/*" required />
+    <button type="submit">Enviar imagem</button>
+  </form>
+  <div id="uploadResult"></div>
+
+  <script>
+    const form = document.getElementById('numberForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const number = document.getElementById('numberInput').value;
+
+      const res = await fetch('/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ number })
+      });
+
+      if (!res.ok) {
+        document.getElementById('result').innerHTML = 'Erro ao gerar imagem.';
+        return;
+      }
+
+      const data = await res.json();
+      document.getElementById('result').innerHTML = `
+        <p>Número: ${number}</p>
+        <img src="${data.image}" alt="Número cisterciense gerado" />
+      `;
+    });
+
+    const uploadForm = document.getElementById('uploadForm');
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      const fileInput = document.getElementById('imageInput');
+      formData.append('image', fileInput.files[0]);
+
+      const res = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!res.ok) {
+        document.getElementById('uploadResult').innerText = 'Erro ao reconhecer a imagem.';
+        return;
+      }
+
+      const data = await res.json();
+      document.getElementById('uploadResult').innerHTML = `
+        <p><strong>Número identificado:</strong> ${data.number}</p>
+        <p>Componentes detectados: ${data.components.join(' + ')}</p>
+        <p>${data.message}</p>
+      `;
+    });
+  </script>
+</body>
+</html>
