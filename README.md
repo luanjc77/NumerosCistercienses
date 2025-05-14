@@ -63,7 +63,9 @@ NumerosCistercienses/
 ├── uploads/                      # Arquivo temporário da imagens inserirdas
 ├── utils/
 │   └── imageComposer.js          # Gerador da imagem referente ao número digitado
-└── app.js                        # Arquivo princial da aplicação node
+├── app.js                        # Arquivo princial da aplicação node
+├── packege-lock.json
+├── packege.json
 └── README.md                     # Este arquivo
 
 
